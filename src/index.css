@@ -9,3 +9,11 @@ body,
 body {
   min-width: 320px;
 }
+
+
+/* The application-wide Persian/Arabic typeface is Vazirmatn. */
+html {
+  font-family: "Vazirmatn", Inter, Tahoma, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}

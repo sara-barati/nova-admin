@@ -35,13 +35,18 @@ const BrandPanel = styled.section`
   padding: clamp(32px, 6vw, 76px);
   color: #fff;
   background:
-    radial-gradient(circle at 18% 15%, rgba(243,111,33,.22), transparent 28%),
-    linear-gradient(145deg, #12243B 0%, #1B3553 55%, #294765 100%);
+    radial-gradient(
+      circle at 18% 15%,
+      rgba(243, 111, 33, 0.22),
+      transparent 28%
+    ),
+    linear-gradient(145deg, #12243b 0%, #1b3553 55%, #294765 100%);
 
-  &::before, &::after {
+  &::before,
+  &::after {
     content: '';
     position: absolute;
-    border: 1px solid rgba(255,255,255,.16);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 50%;
     pointer-events: none;
   }
@@ -103,7 +108,7 @@ const BrandName = styled.div`
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 2px;
-    opacity: .78;
+    opacity: 0.78;
   }
 `
 
@@ -122,14 +127,20 @@ const BrandMessage = styled.div`
 
   p {
     max-width: 470px;
-    color: rgba(255,255,255,.82);
+    color: rgba(255, 255, 255, 0.82);
     font-size: 16px;
     line-height: 1.9;
   }
 
   @media (max-width: 820px) {
-    h1 { font-size: clamp(26px, 6vw, 38px); margin-bottom: 8px; }
-    p { font-size: 14px; line-height: 1.7; }
+    h1 {
+      font-size: clamp(26px, 6vw, 38px);
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 14px;
+      line-height: 1.7;
+    }
   }
 `
 
@@ -138,21 +149,27 @@ const FeatureLine = styled.div`
   align-items: center;
   gap: 10px;
   margin-top: 30px;
-  color: rgba(255,255,255,.9);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 13px;
 
-  svg { flex-shrink: 0; }
+  svg {
+    flex-shrink: 0;
+  }
 
-  @media (max-width: 820px) { display: none; }
+  @media (max-width: 820px) {
+    display: none;
+  }
 `
 
 const BrandFooter = styled.p`
   position: relative;
   z-index: 1;
-  color: rgba(255,255,255,.65);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 12px;
 
-  @media (max-width: 820px) { display: none; }
+  @media (max-width: 820px) {
+    display: none;
+  }
 `
 
 const FormPanel = styled.section`
@@ -169,7 +186,9 @@ const FormPanel = styled.section`
     padding: 42px 22px 56px;
   }
 
-  @media (max-width: 480px) { padding: 34px 18px 44px; }
+  @media (max-width: 480px) {
+    padding: 34px 18px 44px;
+  }
 `
 
 const TopActions = styled.div`
@@ -196,7 +215,7 @@ const Eyebrow = styled.div`
   color: ${({ theme }) => theme.colors.accent};
   font-size: 12px;
   font-weight: 750;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
 `
 
 const FormHeading = styled.div`
@@ -206,7 +225,7 @@ const FormHeading = styled.div`
     margin-bottom: 9px;
     color: ${({ theme }) => theme.colors.text};
     font-size: clamp(27px, 3vw, 34px);
-    letter-spacing: -.8px;
+    letter-spacing: -0.8px;
   }
 
   p {
@@ -252,9 +271,14 @@ const StyledField = styled(Field)`
   background: ${({ theme }) => theme.colors.surface};
   color: ${({ theme }) => theme.colors.text};
   font-size: 14px;
-  transition: border-color .18s ease, box-shadow .18s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 
-  &::placeholder { color: ${({ theme }) => theme.colors.secondaryText}; opacity: .8; }
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.secondaryText};
+    opacity: 0.8;
+  }
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.accent};
@@ -293,10 +317,17 @@ const SubmitButton = styled.button`
   font-size: 14px;
   font-weight: 700;
   box-shadow: 0 10px 22px ${({ theme }) => theme.colors.accent}35;
-  transition: transform .18s ease, opacity .18s ease;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease;
 
-  &:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.04); }
-  &:disabled { opacity: .65; }
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+  }
+  &:disabled {
+    opacity: 0.65;
+  }
 `
 
 const FormHint = styled.p`
@@ -357,7 +388,7 @@ function Login() {
           </FeatureLine>
         </BrandMessage>
 
-        <BrandFooter>© {new Date().getFullYear()} NOVA. {t('auth.allRightsReserved')}</BrandFooter>
+        {/* <BrandFooter>© {new Date().getFullYear()} NOVA. {t('auth.allRightsReserved')}</BrandFooter> */}
       </BrandPanel>
 
       <FormPanel>
@@ -366,7 +397,9 @@ function Login() {
         </TopActions>
 
         <LoginCard>
-          <Eyebrow><Sparkles size={15} /> {t('auth.welcomeBack')}</Eyebrow>
+          <Eyebrow>
+            <Sparkles size={15} /> {t('auth.welcomeBack')}
+          </Eyebrow>
           <FormHeading>
             <h2>{t('auth.login')}</h2>
             <p>{t('auth.loginDescription')}</p>
@@ -391,7 +424,9 @@ function Login() {
                       placeholder={t('auth.usernamePlaceholder')}
                     />
                   </InputWrap>
-                  {touched.username && errors.username && <ErrorText>{errors.username}</ErrorText>}
+                  {touched.username && errors.username && (
+                    <ErrorText>{errors.username}</ErrorText>
+                  )}
                 </FormGroup>
 
                 <FormGroup>
@@ -406,7 +441,9 @@ function Login() {
                       placeholder={t('auth.passwordPlaceholder')}
                     />
                   </InputWrap>
-                  {touched.password && errors.password && <ErrorText>{errors.password}</ErrorText>}
+                  {touched.password && errors.password && (
+                    <ErrorText>{errors.password}</ErrorText>
+                  )}
                 </FormGroup>
 
                 {error && <ServerError role="alert">{error}</ServerError>}
