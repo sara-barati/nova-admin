@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Swal from 'sweetalert2'
+import { useTranslation } from 'react-i18next'
 
 import 'sweetalert2/dist/sweetalert2.min.css'
 
@@ -20,24 +21,48 @@ const PageHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+
+  h1 {
+    color: ${({ theme }) => theme.colors.text};
+    font-size: clamp(22px, 3vw, 28px);
+  }
+
+  @media (max-width: 560px) {
+    align-items: stretch;
+    flex-direction: column;
+  }
 `
 
 const SearchInput = styled.input`
   width: 100%;
-  max-width: 350px;
-  padding: 12px;
+  max-width: 380px;
+  min-height: 46px;
+  padding: 0 14px;
   border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 8px;
+  border-radius: 10px;
+  outline: none;
   background: ${({ theme }) => theme.colors.surface};
   color: ${({ theme }) => theme.colors.text};
+
+  &:focus { border-color: ${({ theme }) => theme.colors.accent}; }
+
+  @media (max-width: 560px) { max-width: none; }
 `
 
 const PrimaryButton = styled.button`
-  padding: 10px 18px;
+  min-height: 44px;
+  padding: 0 18px;
   border: none;
-  border-radius: 8px;
-  background: ${({ theme }) => theme.colors.primary};
+  border-radius: 10px;
+  background: ${({ theme }) => theme.colors.accent};
   color: white;
+  transition: filter .18s ease, transform .18s ease;
+
+  &:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); }
+  font-weight: 650;
+  white-space: nowrap;
+
+  @media (max-width: 560px) { width: 100%; }
 `
 
 const TableWrapper = styled.div`
@@ -82,6 +107,7 @@ const StatusMessage = styled.p`
 `
 
 function Products() {
+  const { t } = useTranslation()
   const [products, setProducts] = useState<Product[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
@@ -96,11 +122,11 @@ function Products() {
       const data = await productService.getProducts()
       setProducts(data)
     } catch {
-      setError('Failed to load products. Please try again.')
+      setError(t('products.loadError'))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     fetchProducts()
@@ -118,16 +144,16 @@ function Products() {
         toast: true,
         position: 'top-end',
         icon: 'success',
-        title: 'Product added successfully!',
+        title: t('products.addSuccess'),
         showConfirmButton: false,
         timer: 2500,
       })
     } catch {
       Swal.fire({
         icon: 'error',
-        title: 'Something went wrong!',
-        text: 'Failed to add product. Please try again.',
-        confirmButtonText: 'OK',
+        title: t('products.addError'),
+        text: t('products.addError'),
+        confirmButtonText: t('common.close'),
       })
     }
   }
@@ -142,14 +168,14 @@ function Products() {
   })
 
   if (loading) {
-    return <StatusMessage>Loading products...</StatusMessage>
+    return <StatusMessage>{t('products.loading')}</StatusMessage>
   }
 
   if (error) {
     return (
       <PageContainer>
         <StatusMessage>{error}</StatusMessage>
-        <PrimaryButton onClick={fetchProducts}>Try Again</PrimaryButton>
+        <PrimaryButton onClick={fetchProducts}>{t('common.retry')}</PrimaryButton>
       </PageContainer>
     )
   }
@@ -157,10 +183,10 @@ function Products() {
   return (
     <PageContainer>
       <PageHeader>
-        <h1>Products</h1>
+        <h1>{t('products.title')}</h1>
 
         <PrimaryButton onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Close Form' : 'Add Product'}
+          {showForm ? t('products.closeForm') : t('products.addProduct')}
         </PrimaryButton>
       </PageHeader>
 
@@ -173,24 +199,24 @@ function Products() {
 
       <SearchInput
         type="text"
-        placeholder="Search products..."
+        placeholder={t('products.searchPlaceholder')}
         value={search}
         onChange={(event) => setSearch(event.target.value)}
       />
 
       {filteredProducts.length === 0 ? (
         <StatusMessage>
-          {search ? 'No products found.' : 'There are no products yet.'}
+          {search ? t('products.notFound') : t('products.empty')}
         </StatusMessage>
       ) : (
         <TableWrapper>
           <ProductTable>
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Price</th>
+                <th>{t('common.image')}</th>
+                <th>{t('common.title')}</th>
+                <th>{t('common.category')}</th>
+                <th>{t('common.price')}</th>
               </tr>
             </thead>
 

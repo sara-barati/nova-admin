@@ -4,16 +4,21 @@ import * as Yup from 'yup'
 
 import type { CreateProduct } from '../types/product'
 import { Formik, Form, Field, type FieldProps } from 'formik'
+import { useTranslation } from 'react-i18next'
 interface ProductFormProps {
   onSubmit: (values: CreateProduct) => Promise<void>
   onCancel: () => void
 }
 
 const FormContainer = styled.div`
+  min-width: 0;
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 24px;
+  box-shadow: 0 8px 24px rgba(20, 25, 40, .035);
+
+  @media (max-width: 600px) { padding: 18px; }
 `
 
 const FormTitle = styled.h2`
@@ -51,7 +56,7 @@ const StyledField = styled(Field)`
   color: ${({ theme }) => theme.colors.text};
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
+    border-color: ${({ theme }) => theme.colors.accent};
   }
 `
 
@@ -67,7 +72,7 @@ const StyledTextArea = styled.textarea`
   color: ${({ theme }) => theme.colors.text};
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
+    border-color: ${({ theme }) => theme.colors.accent};
   }
 `
 
@@ -93,14 +98,22 @@ const ButtonGroup = styled.div`
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
+
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+    button { width: 100%; }
+  }
 `
 
 const Button = styled.button`
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.colors.accent};
   color: white;
+  transition: filter .18s ease, transform .18s ease;
+
+  &:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); }
 
   &:disabled {
     opacity: 0.6;
@@ -114,24 +127,6 @@ const CancelButton = styled(Button)`
   border: 1px solid ${({ theme }) => theme.colors.border};
 `
 
-const validationSchema = Yup.object({
-  title: Yup.string().trim().required('Title is required'),
-
-  price: Yup.number()
-    .typeError('Price must be a valid number')
-    .moreThan(0, 'Price must be greater than zero')
-    .required('Price is required'),
-
-  description: Yup.string().trim().required('Description is required'),
-
-  category: Yup.string().trim().required('Category is required'),
-
-  image: Yup.string()
-    .trim()
-    .url('Enter a valid image URL')
-    .required('Image URL is required'),
-})
-
 const initialValues: CreateProduct = {
   title: '',
   price: 0,
@@ -141,9 +136,20 @@ const initialValues: CreateProduct = {
 }
 
 function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
+  const { t } = useTranslation()
+  const validationSchema = Yup.object({
+    title: Yup.string().trim().required(t('validation.required')),
+    price: Yup.number()
+      .typeError(t('validation.priceNumber'))
+      .moreThan(0, t('validation.pricePositive'))
+      .required(t('validation.required')),
+    description: Yup.string().trim().required(t('validation.required')),
+    category: Yup.string().trim().required(t('validation.required')),
+    image: Yup.string().trim().url(t('validation.invalidUrl')).required(t('validation.required')),
+  })
   return (
     <FormContainer>
-      <FormTitle>Add New Product</FormTitle>
+      <FormTitle>{t('products.formTitle')}</FormTitle>
 
       <Formik
         initialValues={initialValues}
@@ -154,7 +160,7 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
           <Form>
             {submitCount > 0 && Object.keys(errors).length > 0 && (
               <FormError>
-                Please check the following fields:
+                {t('products.checkFields')}
                 <ul>
                   {Object.values(errors).map((error, index) => (
                     <li key={index}>{error}</li>
@@ -165,12 +171,12 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
 
             <FormGrid>
               <FormGroup>
-                <label htmlFor="title">Product Title</label>
+                <label htmlFor="title">{t('products.titleLabel')}</label>
 
                 <StyledField
                   id="title"
                   name="title"
-                  placeholder="Enter product title"
+                  placeholder={t('products.titlePlaceholder')}
                 />
 
                 {touched.title && errors.title && (
@@ -179,7 +185,7 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
               </FormGroup>
 
               <FormGroup>
-                <label htmlFor="price">Price</label>
+                <label htmlFor="price">{t('common.price')}</label>
 
                 <StyledField
                   id="price"
@@ -187,7 +193,7 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
                   type="number"
                   min="0.01"
                   step="0.01"
-                  placeholder="Enter price"
+                  placeholder={t('products.pricePlaceholder')}
                 />
 
                 {touched.price && errors.price && (
@@ -196,12 +202,12 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
               </FormGroup>
 
               <FormGroup>
-                <label htmlFor="category">Category</label>
+                <label htmlFor="category">{t('common.category')}</label>
 
                 <StyledField
                   id="category"
                   name="category"
-                  placeholder="Enter category"
+                  placeholder={t('products.categoryPlaceholder')}
                 />
 
                 {touched.category && errors.category && (
@@ -210,12 +216,12 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
               </FormGroup>
 
               <FormGroup>
-                <label htmlFor="image">Image URL</label>
+                <label htmlFor="image">{t('common.image')}</label>
 
                 <StyledField
                   id="image"
                   name="image"
-                  placeholder="https://example.com/image.jpg"
+                  placeholder={t('products.imagePlaceholder')}
                 />
 
                 {touched.image && errors.image && (
@@ -225,14 +231,14 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
 
               <FullWidth>
                 <FormGroup>
-                  <label htmlFor="description">Description</label>
+                  <label htmlFor="description">{t('common.description')}</label>
 
                   <Field name="description">
                     {({ field }: FieldProps<string>) => (
                       <StyledTextArea
                         {...field}
                         id="description"
-                        placeholder="Enter product description"
+                        placeholder={t('products.descriptionPlaceholder')}
                       />
                     )}
                   </Field>
@@ -250,11 +256,11 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
                 onClick={onCancel}
                 disabled={isSubmitting}
               >
-                Cancel
+                {t('common.cancel')}
               </CancelButton>
 
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Adding...' : 'Add Product'}
+                {isSubmitting ? t('products.adding') : t('products.addProduct')}
               </Button>
             </ButtonGroup>
           </Form>
