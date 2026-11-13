@@ -7,10 +7,7 @@ import 'sweetalert2/dist/sweetalert2.min.css'
 import productService from '../Utils/services/productService'
 import ProductForm from '../Components/ProductForm'
 
-import type {
-  Product,
-  CreateProduct,
-} from '../types/product'
+import type { Product, CreateProduct } from '../types/product'
 
 const PageContainer = styled.div`
   display: flex;
@@ -113,10 +110,7 @@ function Products() {
     try {
       const newProduct = await productService.createProduct(values)
 
-      setProducts((currentProducts) => [
-        newProduct,
-        ...currentProducts,
-      ])
+      setProducts((currentProducts) => [newProduct, ...currentProducts])
 
       setShowForm(false)
 
@@ -138,9 +132,14 @@ function Products() {
     }
   }
 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredProducts = products.filter((product) => {
+    const searchValue = search.trim().toLowerCase()
+
+    return (
+      product.title.toLowerCase().includes(searchValue) ||
+      product.category.toLowerCase().includes(searchValue)
+    )
+  })
 
   if (loading) {
     return <StatusMessage>Loading products...</StatusMessage>
@@ -150,9 +149,7 @@ function Products() {
     return (
       <PageContainer>
         <StatusMessage>{error}</StatusMessage>
-        <PrimaryButton onClick={fetchProducts}>
-          Try Again
-        </PrimaryButton>
+        <PrimaryButton onClick={fetchProducts}>Try Again</PrimaryButton>
       </PageContainer>
     )
   }
@@ -183,9 +180,7 @@ function Products() {
 
       {filteredProducts.length === 0 ? (
         <StatusMessage>
-          {search
-            ? 'No products found.'
-            : 'There are no products yet.'}
+          {search ? 'No products found.' : 'There are no products yet.'}
         </StatusMessage>
       ) : (
         <TableWrapper>
@@ -203,10 +198,7 @@ function Products() {
               {filteredProducts.map((product) => (
                 <tr key={product.id}>
                   <td>
-                    <ProductImage
-                      src={product.image}
-                      alt={product.title}
-                    />
+                    <ProductImage src={product.image} alt={product.title} />
                   </td>
 
                   <td>{product.title}</td>

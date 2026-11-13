@@ -115,22 +115,16 @@ const CancelButton = styled(Button)`
 `
 
 const validationSchema = Yup.object({
-  title: Yup.string()
-    .trim()
-    .required('Title is required'),
+  title: Yup.string().trim().required('Title is required'),
 
   price: Yup.number()
     .typeError('Price must be a valid number')
     .moreThan(0, 'Price must be greater than zero')
     .required('Price is required'),
 
-  description: Yup.string()
-    .trim()
-    .required('Description is required'),
+  description: Yup.string().trim().required('Description is required'),
 
-  category: Yup.string()
-    .trim()
-    .required('Category is required'),
+  category: Yup.string().trim().required('Category is required'),
 
   image: Yup.string()
     .trim()
@@ -233,15 +227,15 @@ function ProductForm({ onSubmit, onCancel }: ProductFormProps) {
                 <FormGroup>
                   <label htmlFor="description">Description</label>
 
-               <Field name="description">
-  {({ field }: FieldProps<string>) => (
-       <StyledTextArea
-      {...field}
-      id="description"
-      placeholder="Enter product description"
-    />
-  )}
-</Field>
+                  <Field name="description">
+                    {({ field }: FieldProps<string>) => (
+                      <StyledTextArea
+                        {...field}
+                        id="description"
+                        placeholder="Enter product description"
+                      />
+                    )}
+                  </Field>
 
                   {touched.description && errors.description && (
                     <ErrorText>{errors.description}</ErrorText>
