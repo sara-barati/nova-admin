@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next'
 
 import type { CreateUser } from '../types/user'
 
@@ -10,10 +11,14 @@ interface UserFormProps {
 }
 
 const FormContainer = styled.div`
+  min-width: 0;
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 24px;
+  box-shadow: 0 8px 24px rgba(20, 25, 40, .035);
+
+  @media (max-width: 600px) { padding: 18px; }
 `
 
 const FormTitle = styled.h2`
@@ -51,7 +56,7 @@ const StyledField = styled(Field)`
   color: ${({ theme }) => theme.colors.text};
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
+    border-color: ${({ theme }) => theme.colors.accent};
   }
 `
 
@@ -65,14 +70,22 @@ const ButtonGroup = styled.div`
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
+
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+    button { width: 100%; }
+  }
 `
 
 const Button = styled.button`
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.colors.accent};
   color: white;
+  transition: filter .18s ease, transform .18s ease;
+
+  &:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); }
 
   &:disabled {
     opacity: 0.6;
@@ -86,26 +99,6 @@ const CancelButton = styled(Button)`
   border: 1px solid ${({ theme }) => theme.colors.border};
 `
 
-const validationSchema = Yup.object({
-  email: Yup.string()
-    .email('Enter a valid email')
-    .required('Email is required'),
-
-  username: Yup.string().trim().required('Username is required'),
-
-  password: Yup.string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-
-  name: Yup.object({
-    firstname: Yup.string().trim().required('First name is required'),
-
-    lastname: Yup.string().trim().required('Last name is required'),
-  }),
-
-  phone: Yup.string().trim().required('Phone number is required'),
-})
-
 const initialValues: CreateUser = {
   email: '',
   username: '',
@@ -118,9 +111,20 @@ const initialValues: CreateUser = {
 }
 
 function UserForm({ onSubmit, onCancel }: UserFormProps) {
+  const { t } = useTranslation()
+  const validationSchema = Yup.object({
+    email: Yup.string().email(t('validation.invalidEmail')).required(t('validation.required')),
+    username: Yup.string().trim().required(t('validation.required')),
+    password: Yup.string().min(6, t('validation.passwordMin')).required(t('validation.required')),
+    name: Yup.object({
+      firstname: Yup.string().trim().required(t('validation.required')),
+      lastname: Yup.string().trim().required(t('validation.required')),
+    }),
+    phone: Yup.string().trim().required(t('validation.required')),
+  })
   return (
     <FormContainer>
-      <FormTitle>Add New User</FormTitle>
+      <FormTitle>{t('users.formTitle')}</FormTitle>
 
       <Formik<CreateUser>
         initialValues={initialValues}
@@ -131,12 +135,12 @@ function UserForm({ onSubmit, onCancel }: UserFormProps) {
           <Form>
             <FormGrid>
               <FormGroup>
-                <label htmlFor="name.firstname">First Name</label>
+                <label htmlFor="name.firstname">{t('users.firstName')}</label>
 
                 <StyledField
                   id="name.firstname"
                   name="name.firstname"
-                  placeholder="Enter first name"
+                  placeholder={t('users.firstNamePlaceholder')}
                 />
 
                 {touched.name?.firstname && errors.name?.firstname && (
@@ -145,12 +149,12 @@ function UserForm({ onSubmit, onCancel }: UserFormProps) {
               </FormGroup>
 
               <FormGroup>
-                <label htmlFor="name.lastname">Last Name</label>
+                <label htmlFor="name.lastname">{t('users.lastName')}</label>
 
                 <StyledField
                   id="name.lastname"
                   name="name.lastname"
-                  placeholder="Enter last name"
+                  placeholder={t('users.lastNamePlaceholder')}
                 />
 
                 {touched.name?.lastname && errors.name?.lastname && (
@@ -159,12 +163,12 @@ function UserForm({ onSubmit, onCancel }: UserFormProps) {
               </FormGroup>
 
               <FormGroup>
-                <label htmlFor="username">Username</label>
+                <label htmlFor="username">{t('common.username')}</label>
 
                 <StyledField
                   id="username"
                   name="username"
-                  placeholder="Enter username"
+                  placeholder={t('users.usernamePlaceholder')}
                 />
 
                 {touched.username && errors.username && (
@@ -173,13 +177,13 @@ function UserForm({ onSubmit, onCancel }: UserFormProps) {
               </FormGroup>
 
               <FormGroup>
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">{t('common.email')}</label>
 
                 <StyledField
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="Enter email"
+                  placeholder={t('users.emailPlaceholder')}
                 />
 
                 {touched.email && errors.email && (
@@ -188,13 +192,13 @@ function UserForm({ onSubmit, onCancel }: UserFormProps) {
               </FormGroup>
 
               <FormGroup>
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">{t('common.password')}</label>
 
                 <StyledField
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Enter password"
+                  placeholder={t('users.passwordPlaceholder')}
                 />
 
                 {touched.password && errors.password && (
@@ -203,12 +207,12 @@ function UserForm({ onSubmit, onCancel }: UserFormProps) {
               </FormGroup>
 
               <FormGroup>
-                <label htmlFor="phone">Phone</label>
+                <label htmlFor="phone">{t('common.phone')}</label>
 
                 <StyledField
                   id="phone"
                   name="phone"
-                  placeholder="Enter phone number"
+                  placeholder={t('users.phonePlaceholder')}
                 />
 
                 {touched.phone && errors.phone && (
@@ -223,11 +227,11 @@ function UserForm({ onSubmit, onCancel }: UserFormProps) {
                 onClick={onCancel}
                 disabled={isSubmitting}
               >
-                Cancel
+                {t('common.cancel')}
               </CancelButton>
 
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Adding...' : 'Add User'}
+                {isSubmitting ? t('users.adding') : t('users.addUser')}
               </Button>
             </ButtonGroup>
           </Form>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Outlet } from 'react-router-dom'
 
@@ -13,19 +14,38 @@ const LayoutContainer = styled.div`
 const MainContainer = styled.main`
   flex: 1;
   min-width: 0;
+  min-height: 100vh;
 `
 
 const PageContent = styled.div`
-  padding: 24px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 32px;
+
+  @media (max-width: 768px) {
+    padding: 22px 18px 32px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 18px 14px 28px;
+  }
 `
 
 function AdminLayout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const closeSidebar = () => setSidebarOpen(false)
+
   return (
     <LayoutContainer>
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       <MainContainer>
-        <Header />
+        <Header
+          sidebarOpen={sidebarOpen}
+          onMenuClick={() => setSidebarOpen((current) => !current)}
+        />
 
         <PageContent>
           <Outlet />

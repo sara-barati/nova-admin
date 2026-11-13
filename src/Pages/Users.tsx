@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Swal from 'sweetalert2'
+import { useTranslation } from 'react-i18next'
 
 import 'sweetalert2/dist/sweetalert2.min.css'
 
@@ -20,24 +21,48 @@ const PageHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+
+  h1 {
+    color: ${({ theme }) => theme.colors.text};
+    font-size: clamp(22px, 3vw, 28px);
+  }
+
+  @media (max-width: 560px) {
+    align-items: stretch;
+    flex-direction: column;
+  }
 `
 
 const SearchInput = styled.input`
   width: 100%;
-  max-width: 350px;
-  padding: 12px;
+  max-width: 380px;
+  min-height: 46px;
+  padding: 0 14px;
   border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 8px;
+  border-radius: 10px;
+  outline: none;
   background: ${({ theme }) => theme.colors.surface};
   color: ${({ theme }) => theme.colors.text};
+
+  &:focus { border-color: ${({ theme }) => theme.colors.accent}; }
+
+  @media (max-width: 560px) { max-width: none; }
 `
 
 const PrimaryButton = styled.button`
-  padding: 10px 18px;
+  min-height: 44px;
+  padding: 0 18px;
   border: none;
-  border-radius: 8px;
-  background: ${({ theme }) => theme.colors.primary};
+  border-radius: 10px;
+  background: ${({ theme }) => theme.colors.accent};
   color: white;
+  transition: filter .18s ease, transform .18s ease;
+
+  &:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); }
+  font-weight: 650;
+  white-space: nowrap;
+
+  @media (max-width: 560px) { width: 100%; }
 `
 
 const TableWrapper = styled.div`
@@ -73,6 +98,7 @@ const StatusMessage = styled.p`
 `
 
 function Users() {
+  const { t } = useTranslation()
   const [users, setUsers] = useState<User[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
@@ -87,11 +113,11 @@ function Users() {
       const data = await userService.getUsers()
       setUsers(data)
     } catch {
-      setError('Failed to load users. Please try again.')
+      setError(t('users.loadError'))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     fetchUsers()
@@ -116,16 +142,16 @@ function Users() {
         toast: true,
         position: 'top-end',
         icon: 'success',
-        title: 'User added successfully!',
+        title: t('users.addSuccess'),
         showConfirmButton: false,
         timer: 2500,
       })
     } catch {
       Swal.fire({
         icon: 'error',
-        title: 'Something went wrong!',
-        text: 'Failed to add user. Please try again.',
-        confirmButtonText: 'OK',
+        title: t('users.addError'),
+        text: t('users.addError'),
+        confirmButtonText: t('common.close'),
       })
     }
   }
@@ -149,7 +175,7 @@ function Users() {
   })
 
   if (loading) {
-    return <StatusMessage>Loading users...</StatusMessage>
+    return <StatusMessage>{t('users.loading')}</StatusMessage>
   }
 
   if (error) {
@@ -157,7 +183,7 @@ function Users() {
       <PageContainer>
         <StatusMessage>{error}</StatusMessage>
 
-        <PrimaryButton onClick={fetchUsers}>Try Again</PrimaryButton>
+        <PrimaryButton onClick={fetchUsers}>{t('common.retry')}</PrimaryButton>
       </PageContainer>
     )
   }
@@ -165,10 +191,10 @@ function Users() {
   return (
     <PageContainer>
       <PageHeader>
-        <h1>Users</h1>
+        <h1>{t('users.title')}</h1>
 
         <PrimaryButton onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Close Form' : 'Add User'}
+          {showForm ? t('users.closeForm') : t('users.addUser')}
         </PrimaryButton>
       </PageHeader>
 
@@ -181,25 +207,25 @@ function Users() {
 
       <SearchInput
         type="text"
-        placeholder="Search users..."
+        placeholder={t('users.searchPlaceholder')}
         value={search}
         onChange={(event) => setSearch(event.target.value)}
       />
 
       {filteredUsers.length === 0 ? (
         <StatusMessage>
-          {search ? 'No users found.' : 'There are no users yet.'}
+          {search ? t('users.notFound') : t('users.empty')}
         </StatusMessage>
       ) : (
         <TableWrapper>
           <UserTable>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Full Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Phone</th>
+                <th>{t('common.id')}</th>
+                <th>{t('users.fullName')}</th>
+                <th>{t('common.username')}</th>
+                <th>{t('common.email')}</th>
+                <th>{t('common.phone')}</th>
               </tr>
             </thead>
 

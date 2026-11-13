@@ -10,6 +10,7 @@ declare module 'styled-components' {
       text: string
       secondaryText: string
       primary: string
+      accent: string
       border: string
       danger: string
     }
